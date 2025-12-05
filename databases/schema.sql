@@ -13,3 +13,5 @@ CREATE TABLE Product_category(
     CONSTRAINT fk_product FOREIGN KEY (id_product) REFERENCES Product(id_product)
 
 );
+
+SELECT * FROM PRODUCT
