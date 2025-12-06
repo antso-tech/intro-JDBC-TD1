@@ -6,13 +6,14 @@ public class DBConnection {
     String url = "jdbc:postgresql://localhost:5432/product_management_db";
     String user = "product_manager_user";
     String password = "123456";
+    private Connection connection;
+
+
 
     public void getConnection(){
-        Connection connection = null;
-
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url,user, password);
+            this.connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection à la base de données réussi");
 
         }catch (SQLException e){
@@ -25,8 +26,13 @@ public class DBConnection {
 
     }
 
+
+
     public static void main(String[] args) {
         DBConnection firstConnection = new DBConnection();
-
+        firstConnection.getConnection();
+        DataRetriver data = new DataRetriver();
+        data.setConnection(firstConnection.connection);
+        data.getAllCategories();
     }
 }
