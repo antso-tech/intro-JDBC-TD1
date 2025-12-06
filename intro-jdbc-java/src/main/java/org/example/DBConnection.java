@@ -34,5 +34,6 @@ public class DBConnection {
         DataRetriver data = new DataRetriver();
         data.setConnection(firstConnection.connection);
         data.getAllCategories();
+        data.getProductList(1,3);
     }
 }
