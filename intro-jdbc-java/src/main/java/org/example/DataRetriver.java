@@ -54,7 +54,7 @@ public class DataRetriver {
                 String name = rs.getString("name");
                 Float price = rs.getFloat("price");
                 String creation = rs.getString("creation");
-                Product
+                products.
 
             }
 
