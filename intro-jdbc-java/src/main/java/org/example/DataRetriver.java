@@ -53,7 +53,6 @@ public class DataRetriver {
             while (rs.next()){
                 int id = rs.getInt("id_product");
                 String name = rs.getString("name");
-                Float price = rs.getFloat("price");
                 Timestamp creation = rs.getTimestamp("creation");
                 int idCategory = rs.getInt("id_category");
                 String categoryName = rs.getString("name_category");
@@ -76,6 +75,48 @@ public class DataRetriver {
             throw new RuntimeException(e);
         }
         System.out.println(products);
+        return products;
+    }
+
+    List<Product> getProductsByCriteria(String productName, String categoryName,
+                                        Instant creationMin, Instant creationMax){
+        List<Product> products = new ArrayList<>();
+
+        String fitlerByNameSql = "SELECT * FROM Product p INNER JOIN Product_category c on p.id_product = c.id_product WHERE name ILIKE ?";
+        String filterByCategoryName = "SELECT * FROM Product p INNER JOIN Product_category c on p.id_product = c.id_product WHERE name_category ILIKE ?";
+        String filterByDate = "SELECT * FROM Product p INNER JOIN Product_category c on p.id_product = c.id_product WHERE creation = ?";
+        try {
+            if (!productName.isEmpty()) {
+                PreparedStatement ps = connection.prepareStatement(fitlerByNameSql);
+                ps.setString(1,'%' + fitlerByNameSql + '%');
+
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()){
+                    int id = rs.getInt("id_product");
+                    String name = rs.getString("name");
+                    Timestamp creation = rs.getTimestamp("creation");
+                    int idCategory = rs.getInt("id_category");
+                    String nameCategory = rs.getString("name_category");
+                    Product product = new Product();
+                    Category productCategory = new Category();
+
+                    product.setId(id);
+                    product.setName(name);
+                    product.setCreationDateTime(creation.toInstant());
+                    productCategory.setId(idCategory);
+                    productCategory.setName(nameCategory);
+                    product.setCategory(productCategory);
+
+
+                }
+
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return products;
     }
 }
