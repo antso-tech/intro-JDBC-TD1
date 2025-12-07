@@ -19,4 +19,6 @@ INSERT INTO Product_category (name, id_product) VALUES ('Bureau',5)
 
 INSERT INTO Product_category (name, id_product) VALUES ('Mobile',2)
 
+SELECT * From Product_category;
+
 
