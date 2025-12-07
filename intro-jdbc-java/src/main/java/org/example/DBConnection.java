@@ -1,6 +1,7 @@
 package org.example;
 
 import java.sql.*;
+import java.time.Instant;
 
 public class DBConnection {
     String url = "jdbc:postgresql://localhost:5432/product_management_db";
@@ -35,5 +36,6 @@ public class DBConnection {
         data.setConnection(firstConnection.connection);
         data.getAllCategories();
         data.getProductList(1,3);
+        data.getProductsByCriteria("on",null,Instant.parse("2025-12-05T15:52:15Z"),null);
     }
 }
