@@ -159,7 +159,7 @@ public class DataRetriver {
         StringBuilder sqlFilter = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
                 "c on p.id_product = c.id_product");
         List<Object> parameters = new ArrayList<>();
-
+        int offset = (page - 1) * size;
 
         boolean added = false;
         if(productName != null && !productName.isEmpty()){
@@ -188,6 +188,32 @@ public class DataRetriver {
             parameters.add(Timestamp.from(creationMax));
             added = true;
         }
+
+        try {
+            PreparedStatement st1 = connection.prepareStatement(String.valueOf(sqlFilter));
+            for (int i = 0; i < parameters.size(); i++) {
+                st1.setObject(i + 1, parameters.get(i));
+
+            }
+            PreparedStatement st2 = connection.prepareStatement(sqlLimits);
+            ResultSet rs1 = st1.executeQuery();
+            st2.setInt(1,size);
+            st2.setInt(2,offset);
+            ResultSet rs2 = st2.executeQuery();
+
+            while (rs1.next() && rs2.next()){
+                int id = rs1.getInt("id_product");
+
+            }
+
+
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
         return products;
     }
