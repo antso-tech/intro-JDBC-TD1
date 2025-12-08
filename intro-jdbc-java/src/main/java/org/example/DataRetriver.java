@@ -203,18 +203,30 @@ public class DataRetriver {
 
             while (rs1.next() && rs2.next()){
                 int id = rs1.getInt("id_product");
+                String name = rs1.getString("name");
+                Timestamp creation = rs1.getTimestamp("creation_date_time");
+                int idCategory = rs1.getInt("id_category");
+                String nameCategory = rs1.getString("name_category");
+
+                Product product = new Product();
+                Category category = new Category();
+                product.setId(id);
+                product.setName(name);
+                product.setCreationDateTime(creation.toInstant());
+                category.setId(idCategory);
+                category.setName(nameCategory);
+                product.setCategory(category);
+
+                products.add(product);
 
             }
-
-
-
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
+        if (!added){
+            return new ArrayList<>();
+        }
         return products;
     }
 }
