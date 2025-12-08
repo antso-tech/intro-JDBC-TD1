@@ -149,5 +149,17 @@ public class DataRetriver {
         return products;
     }
 
+    List<Product>
+    getProductsByCriteria(String productName, String
+            categoryName, Instant creationMin, Instant creationMax, int page, int size){
+        List<Product> products = new ArrayList<>();
+        String sqlLimits = "SELECT * FROM " +
+                "product p LEFT JOIN product_category c on " +
+                "p.id_product = c.id_product LIMIT ? OFFSET ?";
+        StringBuilder sqlFilter = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
+                "c on p.id_product = c.id_product");
+        return products;
+    }
+
 
 }
