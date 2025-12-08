@@ -85,13 +85,13 @@ public class DataRetriver {
         boolean added = false;
         StringBuilder sql = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
                 "c on p.id_product = c.id_product");
-                if(productName != null && !productName.trim().isEmpty()){
+                if(productName != null ){
                     sql.append(added ? " AND " : " WHERE ");
                     sql.append(" name ILIKE ?");
                     parameters.add("%" + productName + "%");
                     added = true;
                 }
-                if (categoryName != null && !categoryName.trim().isEmpty()){
+                if (categoryName != null){
                     sql.append(added ? " AND " : " WHERE ");
                     sql.append(" name_category ILIKE ?");
                     parameters.add("%" + categoryName + "%");
@@ -158,8 +158,37 @@ public class DataRetriver {
                 "p.id_product = c.id_product LIMIT ? OFFSET ?";
         StringBuilder sqlFilter = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
                 "c on p.id_product = c.id_product");
+        List<Object> parameters = new ArrayList<>();
+
+
+        boolean added = false;
+        if(productName != null && !productName.isEmpty()){
+            sqlFilter.append(added ? "AND" : "WHERE");
+            sqlFilter.append(" name ILIKE ? ");
+            parameters.add("%" + productName + "%");
+            added = true;
+
+        }
+        if(categoryName != null && !categoryName.isEmpty()){
+            sqlFilter.append(added ? "AND" : "WHERE");
+            sqlFilter.append(" name_category ILIKE ? ");
+            parameters.add("%" + categoryName + "%");
+            added = true;
+        }
+        if(creationMin != null){
+            sqlFilter.append(added ? "AND" : "WHERE");
+            sqlFilter.append("creation_date_time >= ?");
+            parameters.add(Timestamp.from(creationMin));
+            added = true;
+
+        }
+        if(creationMax != null){
+            sqlFilter.append(added ? "AND" : "WHERE");
+            sqlFilter.append("creation_date_time >= ?");
+            parameters.add(Timestamp.from(creationMax));
+            added = true;
+        }
+
         return products;
     }
-
-
 }
