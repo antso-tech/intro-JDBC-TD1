@@ -43,11 +43,9 @@ public class DataRetriver {
         int offset = (page - 1) * size;
         String sql = "SELECT * FROM " +
                 "product p LEFT JOIN product_category c on " +
-                "p.id_product = c.id_product LIMIT ? OFFSET ?";
-        try(PreparedStatement st = connection.prepareStatement(sql)) {
-            st.setInt(1,size);
-            st.setInt(2,offset);
-            ResultSet rs = st.executeQuery();
+                "p.id_product = c.id_product LIMIT %d OFFSET %d".formatted(size,offset);
+        try(Statement st = connection.createStatement()) {
+            ResultSet rs = st.executeQuery(sql);
 
             while (rs.next()){
                 int id = rs.getInt("id_product");
@@ -74,52 +72,44 @@ public class DataRetriver {
             throw new RuntimeException(e);
         }
         System.out.println(products);
+
         return products;
     }
 
     public List<Product> getProductsByCriteria(String productName, String categoryName,
                                       Instant creationMin, Instant creationMax){
         List<Product> products = new ArrayList<>();
-        List<Object> parameters = new ArrayList<>();
         boolean added = false;
         StringBuilder sql = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
                 "c on p.id_product = c.id_product");
                 if(productName != null ){
                     sql.append(added ? " AND " : " WHERE ");
-                    sql.append(" name ILIKE ?");
-                    parameters.add("%" + productName + "%");
+                    sql.append(" name ILIKE '%").append(productName).append("%'");
                     added = true;
                 }
                 if (categoryName != null){
                     sql.append(added ? " AND " : " WHERE ");
-                    sql.append(" name_category ILIKE ?");
-                    parameters.add("%" + categoryName + "%");
+                    sql.append(" name_category ILIKE '%").append(categoryName).append("%'");
                     added= true;
                 }
                 if (creationMin != null){
                     sql.append(added ? " AND " : " WHERE ");
-                    sql.append(" creation_date_time >= ?");
-                    parameters.add(Timestamp.from(creationMin));
+                    sql.append(" creation_date_time >= '%").append(creationMin).append("%'");
+                    System.out.println("Parameters : " + creationMin);
+                    System.out.println("result : " + creationMin);
                     added=true;
 
                 }
                 if(creationMax != null){
-                    sql.append(added ? " AND " : " WHERE ");
-                    sql.append(" creation_date_time <= ?");
-                    System.out.println("instant creationMax : " + creationMax);
-                    System.out.println("creationMax timestamp : " + Timestamp.from(creationMax));
-                    parameters.add(Timestamp.from(creationMax));
+                    sql.append(added ? " AND " : " WHERE");
+                    sql.append(" creation_date_time <= '%").append(creationMax).append("%'");
                     added=true;
 
                 }
+        System.out.println(sql.toString());
+                try (Statement ps = connection.createStatement()){
+                    ResultSet rs = ps.executeQuery(String.valueOf(sql));
 
-        System.out.println("SQL généré: " + sql.toString());
-                try (PreparedStatement ps = connection.prepareStatement(sql.toString())){
-                    for (int i = 0; i < parameters.size(); i++) {
-                        ps.setObject(i + 1, parameters.get(i));
-                    }
-
-                    ResultSet rs = ps.executeQuery();
                     while (rs.next()){
                         int id = rs.getInt("id_product");
                         String name = rs.getString("name");
@@ -163,42 +153,31 @@ public class DataRetriver {
         boolean added = false;
         if(productName != null && !productName.isEmpty()){
             sql.append(added ? " AND " : " WHERE ");
-            sql.append(" name ILIKE ? ");
-            parameters.add("%" + productName + "%");
+            sql.append(" name ILIKE '%").append(productName).append("%'");
             added = true;
 
         }
         if(categoryName != null && !categoryName.isEmpty()){
             sql.append(added ? " AND " : " WHERE ");
-            sql.append(" name_category ILIKE ? ");
-            parameters.add("%" + categoryName + "%");
+            sql.append(" name_category ILIKE '%").append(categoryName).append("%'");
             added = true;
         }
         if(creationMin != null){
             sql.append(added ? " AND " : " WHERE ");
-            sql.append("creation_date_time >= ?");
-            parameters.add(Timestamp.from(creationMin));
+            sql.append("creation_date_time >= '%").append(creationMin).append("%'");
             added = true;
 
         }
         if(creationMax != null){
             sql.append(added ? " AND " : " WHERE ");
-            sql.append("creation_date_time <= ?");
-            parameters.add(Timestamp.from(creationMax));
+            sql.append("creation_date_time <= '%").append(creationMax).append("%'");
             added = true;
         }
 
-        sql.append(" LIMIT ? OFFSET ?");
+        sql.append(" LIMIT %d OFFSET %d".formatted(size,offset));
         try {
-            PreparedStatement st = connection.prepareStatement(String.valueOf(sql));
-            int parametreIndex = 1;
-            for (Object param : parameters) {
-                st.setObject(parametreIndex++, param);
-
-            }
-            st.setInt(parametreIndex++,size);
-            st.setInt(parametreIndex,offset);
-            ResultSet rs = st.executeQuery();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql.toString());
             while (rs.next()){
                 int id = rs.getInt("id_product");
                 String name = rs.getString("name");
@@ -225,6 +204,7 @@ public class DataRetriver {
         if (!added){
             return new ArrayList<>();
         }
+        System.out.println(products);
         return products;
     }
 }

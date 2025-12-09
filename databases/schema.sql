@@ -14,7 +14,4 @@ CREATE TABLE Product_category(
 
 );
 
-ALTER TABLE Product_category RENAME COLUMN name to name_category
-
-SELECT * FROM PRODUCT;
-SELECT * FROM Product p LEFT JOIN Product_category c on p.id_product = c.id_product LIMIT 2 OFFSET 2 ;
+ALTER TABLE Product RENAME COLUMN creation to creation_date_time

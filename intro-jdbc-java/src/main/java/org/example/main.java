@@ -9,8 +9,7 @@ public class main {
         DataRetriver data = new DataRetriver();
         data.setConnection(firstConnection.getConnection());
         data.getAllCategories();
-
-        System.out.println("------------------------------------");
+        System.out.println("----------------------------------");
         data.getProductList(1,10);
         data.getProductList(1, 5);
         data.getProductList(2,2);
@@ -26,7 +25,7 @@ public class main {
         data.getProductsByCriteria("Sony","Informatique",null,null);
         data.getProductsByCriteria(null,null,null,null);
 
-        System.out.println("------------------------------------");
+        System.out.println("--------------------------------------");
         data.getProductsByCriteria(null,null,null,null,1,10);
         data.getProductsByCriteria("Dell", null, null, null, 1,10);
         data.getProductsByCriteria(null,"Informatique",null,null,1,10);
