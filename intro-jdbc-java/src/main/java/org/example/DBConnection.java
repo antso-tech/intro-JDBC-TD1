@@ -4,16 +4,14 @@ import java.sql.*;
 import java.time.Instant;
 
 public class DBConnection {
-    String url = "jdbc:postgresql://localhost:5432/product_management_db";
-    String user = "product_manager_user";
-    String password = "123456";
     private Connection connection;
 
-
-
-    public void getConnection(){
+    public Connection getConnection(){
         try {
             Class.forName("org.postgresql.Driver");
+            String url = "jdbc:postgresql://localhost:5432/product_management_db";
+            String user = "product_manager_user";
+            String password = "123456";
             this.connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection à la base de données réussi");
 
@@ -24,18 +22,10 @@ public class DBConnection {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
+        return connection;
     }
 
 
 
-    public static void main(String[] args) {
-        DBConnection firstConnection = new DBConnection();
-        firstConnection.getConnection();
-        DataRetriver data = new DataRetriver();
-        data.setConnection(firstConnection.connection);
-        data.getAllCategories();
-        data.getProductList(1,3);
-        data.getProductsByCriteria("on",null,Instant.parse("2025-12-05T15:52:15Z"),null);
-    }
+
 }

@@ -3,7 +3,6 @@ package org.example;
 import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DataRetriver {
@@ -12,7 +11,7 @@ public class DataRetriver {
     public void setConnection(Connection connection){
         this.connection = connection;
     }
-    List<Category> getAllCategories(){
+    public List<Category> getAllCategories(){
         List<Category> allCategories = new ArrayList<>();
 
         String sql = "SELECT * FROM Product_category";
@@ -38,7 +37,7 @@ public class DataRetriver {
         return allCategories;
     }
 
-    List<Product> getProductList (int page, int size){
+    public List<Product> getProductList (int page, int size){
         List<Product> products = new ArrayList<>();
 
         int offset = (page - 1) * size;
@@ -78,8 +77,8 @@ public class DataRetriver {
         return products;
     }
 
-    List<Product> getProductsByCriteria(String productName, String categoryName,
-                                        Instant creationMin, Instant creationMax){
+    public List<Product> getProductsByCriteria(String productName, String categoryName,
+                                      Instant creationMin, Instant creationMax){
         List<Product> products = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
         boolean added = false;
@@ -107,6 +106,8 @@ public class DataRetriver {
                 if(creationMax != null){
                     sql.append(added ? " AND " : " WHERE ");
                     sql.append(" creation_date_time <= ?");
+                    System.out.println("instant creationMax : " + creationMax);
+                    System.out.println("creationMax timestamp : " + Timestamp.from(creationMax));
                     parameters.add(Timestamp.from(creationMax));
                     added=true;
 
@@ -136,6 +137,7 @@ public class DataRetriver {
                         productCategory.setName(nameCategory);
                         product.setCategory(productCategory);
                         products.add(product);
+
                     }
 
 
@@ -149,64 +151,60 @@ public class DataRetriver {
         return products;
     }
 
-    List<Product>
+    public List<Product>
     getProductsByCriteria(String productName, String
             categoryName, Instant creationMin, Instant creationMax, int page, int size){
         List<Product> products = new ArrayList<>();
-        String sqlLimits = "SELECT * FROM " +
-                "product p LEFT JOIN product_category c on " +
-                "p.id_product = c.id_product LIMIT ? OFFSET ?";
-        StringBuilder sqlFilter = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
+        StringBuilder sql = new StringBuilder("SELECT * FROM Product p INNER JOIN Product_category " +
                 "c on p.id_product = c.id_product");
         List<Object> parameters = new ArrayList<>();
         int offset = (page - 1) * size;
 
         boolean added = false;
         if(productName != null && !productName.isEmpty()){
-            sqlFilter.append(added ? "AND" : "WHERE");
-            sqlFilter.append(" name ILIKE ? ");
+            sql.append(added ? " AND " : " WHERE ");
+            sql.append(" name ILIKE ? ");
             parameters.add("%" + productName + "%");
             added = true;
 
         }
         if(categoryName != null && !categoryName.isEmpty()){
-            sqlFilter.append(added ? "AND" : "WHERE");
-            sqlFilter.append(" name_category ILIKE ? ");
+            sql.append(added ? " AND " : " WHERE ");
+            sql.append(" name_category ILIKE ? ");
             parameters.add("%" + categoryName + "%");
             added = true;
         }
         if(creationMin != null){
-            sqlFilter.append(added ? "AND" : "WHERE");
-            sqlFilter.append("creation_date_time >= ?");
+            sql.append(added ? " AND " : " WHERE ");
+            sql.append("creation_date_time >= ?");
             parameters.add(Timestamp.from(creationMin));
             added = true;
 
         }
         if(creationMax != null){
-            sqlFilter.append(added ? "AND" : "WHERE");
-            sqlFilter.append("creation_date_time >= ?");
+            sql.append(added ? " AND " : " WHERE ");
+            sql.append("creation_date_time <= ?");
             parameters.add(Timestamp.from(creationMax));
             added = true;
         }
 
+        sql.append(" LIMIT ? OFFSET ?");
         try {
-            PreparedStatement st1 = connection.prepareStatement(String.valueOf(sqlFilter));
-            for (int i = 0; i < parameters.size(); i++) {
-                st1.setObject(i + 1, parameters.get(i));
+            PreparedStatement st = connection.prepareStatement(String.valueOf(sql));
+            int parametreIndex = 1;
+            for (Object param : parameters) {
+                st.setObject(parametreIndex++, param);
 
             }
-            PreparedStatement st2 = connection.prepareStatement(sqlLimits);
-            ResultSet rs1 = st1.executeQuery();
-            st2.setInt(1,size);
-            st2.setInt(2,offset);
-            ResultSet rs2 = st2.executeQuery();
-
-            while (rs1.next() && rs2.next()){
-                int id = rs1.getInt("id_product");
-                String name = rs1.getString("name");
-                Timestamp creation = rs1.getTimestamp("creation_date_time");
-                int idCategory = rs1.getInt("id_category");
-                String nameCategory = rs1.getString("name_category");
+            st.setInt(parametreIndex++,size);
+            st.setInt(parametreIndex,offset);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()){
+                int id = rs.getInt("id_product");
+                String name = rs.getString("name");
+                Timestamp creation = rs.getTimestamp("creation_date_time");
+                int idCategory = rs.getInt("id_category");
+                String nameCategory = rs.getString("name_category");
 
                 Product product = new Product();
                 Category category = new Category();
