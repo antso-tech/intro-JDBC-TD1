@@ -95,8 +95,6 @@ public class DataRetriver {
                 if (creationMin != null){
                     sql.append(added ? " AND " : " WHERE ");
                     sql.append(" creation_date_time >= '%").append(creationMin).append("%'");
-                    System.out.println("Parameters : " + creationMin);
-                    System.out.println("result : " + creationMin);
                     added=true;
 
                 }
@@ -106,7 +104,6 @@ public class DataRetriver {
                     added=true;
 
                 }
-        System.out.println(sql.toString());
                 try (Statement ps = connection.createStatement()){
                     ResultSet rs = ps.executeQuery(String.valueOf(sql));
 
