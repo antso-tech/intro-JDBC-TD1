@@ -166,7 +166,17 @@ public class DBConnectionTest {
         List<Product> productsAnswer5 = new ArrayList<>();
         Assertions.assertEquals(productsAnswer5,data.getProductsByCriteria(null,null,null,null));
 
+        List<Product> productsAnswer6 = new ArrayList<>();
+        productsAnswer6.add(product2);
+        productsAnswer6.add(product3);
+        productsAnswer6.add(product4);
+        productsAnswer6.add(product5);
+        Assertions.assertEquals(productsAnswer6,data.getProductsByCriteria(null,null,Instant.parse("2025-12-05T15:52:17Z")),Instant.parse("2025-12-05T17:52:17Z"))));
 
+        List<Product> productsAnswer7 = new ArrayList<>();
+        productsAnswer3.add(product3);
+        Assertions.assertEquals(productsAnswer7,data.getProductsByCriteria(null,"Audio",Instant.parse("2025-12-05T15:52:17Z")),Instant.parse("2025-12-05T15:52:17Z"))));
+        
         List<Product> productsAnswer8 = new ArrayList<>();
         Assertions.assertEquals(productsAnswer8,data.getProductsByCriteria(null,null,null,null,1,10));
 
