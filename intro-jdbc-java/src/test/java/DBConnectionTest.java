@@ -26,6 +26,8 @@ public class DBConnectionTest {
     Product product3;
     Product product4;
     Product product5;
+    Product product6;
+    Product product7;
 
     @BeforeEach
      void prepareAllTest(){
@@ -89,6 +91,18 @@ public class DBConnectionTest {
         product5.setName("Ecran Samsung 27");
         product5.setCreationDateTime(Instant.parse("2025-12-05T15:52:17.008421Z"));
         product5.setCategory(category5);
+         
+        product6 = new Product();
+        product6.setId(5);
+        product6.setName("Ecran Samsung 27");
+        product6.setCreationDateTime(Instant.parse("2025-12-05T12:52:08.330214Z"));
+        product6.setCategory(category6);
+
+        product7 = new Product();
+        product7.setId(2);
+        product7.setName("IPhone 13");
+        product7.setCreationDateTime(Instant.parse("2025-12-05T12:52:08.330214Z"));
+        product7.setCategory(category7);
     }
 
     @Test
